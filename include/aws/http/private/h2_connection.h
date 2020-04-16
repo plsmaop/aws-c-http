@@ -156,7 +156,7 @@ AWS_EXTERN_C_END
 /* Private functions called from multiple .c files... */
 
 /* Internal API for changing self settings of the connection */
-int aws_h2_connection_change_setting(
+int aws_h2_connection_change_settings(
     struct aws_h2_connection *connection,
     const struct aws_h2_frame_setting *setting_array,
     size_t num_settings);

@@ -258,6 +258,8 @@ struct aws_h2_decoder {
 
     /* Settings for decoder, which is based on the settings sent to the peer and ACKed by peer */
     struct {
+        /* the maximum size of the header compression table used to decode header blocks */
+        uint32_t header_table_size;
         /* enable/disable server push */
         uint32_t enable_push;
         /*  the size of the largest frame payload */
@@ -311,6 +313,8 @@ struct aws_h2_decoder *aws_h2_decoder_new(struct aws_h2_decoder_params *params) 
     } else {
         decoder->state = &s_state_prefix;
     }
+
+    decoder->settings.header_table_size = aws_h2_settings_initial[AWS_H2_SETTINGS_HEADER_TABLE_SIZE];
     decoder->settings.enable_push = aws_h2_settings_initial[AWS_H2_SETTINGS_ENABLE_PUSH];
     decoder->settings.max_frame_size = aws_h2_settings_initial[AWS_H2_SETTINGS_MAX_FRAME_SIZE];
 
@@ -1497,6 +1501,13 @@ static int s_state_fn_connection_preface_string(struct aws_h2_decoder *decoder, 
 
     /* Remain in state until more data arrives */
     return AWS_OP_SUCCESS;
+}
+
+void aws_h2_decoder_set_setting_header_table_size(struct aws_h2_decoder *decoder, uint32_t data) {
+    /* Set the max_dynamic_table_size for hpack, but we will not update the dynamic table size until we receive dynamic
+     * table size update from header block */
+    aws_hpack_set_max_table_size(decoder->hpack, data, false /*udpate table size*/);
+    decoder->settings.header_table_size = data;
 }
 
 void aws_h2_decoder_set_setting_enable_push(struct aws_h2_decoder *decoder, uint32_t data) {

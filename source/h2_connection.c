@@ -404,7 +404,7 @@ static struct h2_pending_settings *s_new_pending_settings(
     return pending_settings;
 }
 
-int aws_h2_connection_change_setting(
+int aws_h2_connection_change_settings(
     struct aws_h2_connection *connection,
     const struct aws_h2_frame_setting *settings_array,
     size_t num_settings) {
@@ -1092,6 +1092,9 @@ static int s_decoder_on_settings_ack(void *userdata) {
             continue;
         }
         switch (settings_array[i].id) {
+            case AWS_H2_SETTINGS_HEADER_TABLE_SIZE:
+                aws_h2_decoder_set_setting_header_table_size(decoder, settings_array[i].value);
+                break;
             case AWS_H2_SETTINGS_MAX_FRAME_SIZE:
                 aws_h2_decoder_set_setting_max_frame_size(decoder, settings_array[i].value);
                 break;
@@ -1254,7 +1257,7 @@ static void s_handler_installed(struct aws_channel_handler *handler, struct aws_
         new_setting_iter++;
     }
 
-    if (aws_h2_connection_change_setting(connection, initial_settings, new_setting_iter)) {
+    if (aws_h2_connection_change_settings(connection, initial_settings, new_setting_iter)) {
         CONNECTION_LOGF(
             ERROR,
             connection,

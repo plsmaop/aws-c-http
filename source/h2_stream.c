@@ -264,8 +264,7 @@ static int s_send_rst_and_close_stream(struct aws_h2_stream *stream, int aws_err
 }
 
 int aws_h2_stream_window_size_change(struct aws_h2_stream *stream, int32_t size_changed, bool self) {
-    //int32_t *window_size = self? &stream->thread_data.window_size_self : &stream->thread_data.window_size_peer;
-    int32_t *window_size = self? NULL : &stream->thread_data.window_size_peer;
+    int32_t *window_size = self ? &stream->thread_data.window_size_self : &stream->thread_data.window_size_peer;
     if ((int64_t)*window_size + size_changed > AWS_H2_WINDOW_UPDATE_MAX) {
         return AWS_OP_ERR;
     }

@@ -395,26 +395,25 @@ TEST_CASE(h2_client_connection_init_setting_applied_after_ack_by_peer) {
     testing_channel_drain_queued_tasks(&s_tester.testing_channel);
     /* validate the connection is still open */
     ASSERT_TRUE(aws_http_connection_is_open(s_tester.connection));
-    
+
     /* fake peer sends setting ack */
     struct aws_h2_frame *settings_ack_frame = aws_h2_frame_new_settings(allocator, NULL, 0, true);
     ASSERT_SUCCESS(h2_fake_peer_send_frame(&s_tester.peer, settings_ack_frame));
     /* fake peer sends another push_promise again, after setting applied, connection will be closed */
-    peer_frame =
-        aws_h2_frame_new_push_promise(allocator, stream_id, promised_stream_id+2, push_request_headers, 0);
+    peer_frame = aws_h2_frame_new_push_promise(allocator, stream_id, promised_stream_id + 2, push_request_headers, 0);
     ASSERT_SUCCESS(h2_fake_peer_send_frame(&s_tester.peer, peer_frame));
     testing_channel_drain_queued_tasks(&s_tester.testing_channel);
 
     /* validate the connection completed with error */
     ASSERT_FALSE(aws_http_connection_is_open(s_tester.connection));
-    ASSERT_INT_EQUALS(AWS_ERROR_HTTP_PROTOCOL_ERROR, testing_channel_get_shutdown_error_code(&s_tester.testing_channel));
+    ASSERT_INT_EQUALS(
+        AWS_ERROR_HTTP_PROTOCOL_ERROR, testing_channel_get_shutdown_error_code(&s_tester.testing_channel));
     /* clean up */
     aws_http_headers_release(push_request_headers);
     aws_http_message_release(request);
     client_stream_tester_clean_up(&stream_tester);
     return s_tester_clean_up();
 }
-
 
 /* Test that h2 stream can take a h1 request massega and transfrom it to h2 style to send it. */
 TEST_CASE(h2_client_stream_with_h1_request_message) {

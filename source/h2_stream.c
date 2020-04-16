@@ -615,6 +615,23 @@ struct aws_h2err aws_h2_stream_on_decoder_data_i(struct aws_h2_stream *stream, s
     return AWS_H2ERR_SUCCESS;
 }
 
+struct aws_h2err aws_h2_stream_on_decoder_data_i(struct aws_h2_stream *stream, struct aws_byte_cursor data) {
+    AWS_PRECONDITION_ON_CHANNEL_THREAD(stream);
+
+    /* Not calling s_check_state_allows_frame_type() here because we already checked at start of DATA frame in
+     * aws_h2_stream_on_decoder_data_begin() */
+
+    if (stream->base.on_incoming_body) {
+        if (stream->base.on_incoming_body(&stream->base, &data, stream->base.user_data)) {
+            AWS_H2_STREAM_LOGF(
+                ERROR, stream, "Incoming body callback raised error, %s", aws_error_name(aws_last_error()));
+            return aws_h2err_from_last_error();
+        }
+    }
+
+    return AWS_H2ERR_SUCCESS;
+}
+
 struct aws_h2err aws_h2_stream_on_decoder_window_update(
     struct aws_h2_stream *stream,
     uint32_t window_size_increment,

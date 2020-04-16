@@ -395,7 +395,6 @@ TEST_CASE(h2_client_connection_init_setting_applied_after_ack_by_peer) {
     testing_channel_drain_queued_tasks(&s_tester.testing_channel);
     /* validate the connection is still open */
     ASSERT_TRUE(aws_http_connection_is_open(s_tester.connection));
-
     /* fake peer sends setting ack */
     struct aws_h2_frame *settings_ack_frame = aws_h2_frame_new_settings(allocator, NULL, 0, true);
     ASSERT_SUCCESS(h2_fake_peer_send_frame(&s_tester.peer, settings_ack_frame));

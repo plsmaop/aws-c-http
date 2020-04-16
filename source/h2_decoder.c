@@ -325,7 +325,6 @@ struct aws_h2_decoder *aws_h2_decoder_new(struct aws_h2_decoder_params *params) 
     } else {
         decoder->state = &s_state_prefix;
     }
-
     decoder->settings.header_table_size = aws_h2_settings_initial[AWS_H2_SETTINGS_HEADER_TABLE_SIZE];
     decoder->settings.enable_push = aws_h2_settings_initial[AWS_H2_SETTINGS_ENABLE_PUSH];
     decoder->settings.max_frame_size = aws_h2_settings_initial[AWS_H2_SETTINGS_MAX_FRAME_SIZE];

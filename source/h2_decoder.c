@@ -1539,6 +1539,13 @@ void aws_h2_decoder_set_setting_header_table_size(struct aws_h2_decoder *decoder
     decoder->settings.header_table_size = data;
 }
 
+void aws_h2_decoder_set_setting_header_table_size(struct aws_h2_decoder *decoder, uint32_t data) {
+    /* Set the max_dynamic_table_size for hpack, but we will not update the dynamic table size until we receive dynamic
+     * table size update from header block */
+    aws_hpack_set_max_table_size(decoder->hpack, data, false /*udpate table size*/);
+    decoder->settings.header_table_size = data;
+}
+
 void aws_h2_decoder_set_setting_enable_push(struct aws_h2_decoder *decoder, uint32_t data) {
     decoder->settings.enable_push = data;
 }

@@ -1164,7 +1164,6 @@ static struct aws_h2err s_decoder_on_settings_ack(void *userdata) {
     aws_mem_release(pending_settings->alloc, pending_settings->settings_array);
     aws_mem_release(pending_settings->alloc, pending_settings);
     return AWS_H2ERR_SUCCESS;
-
 }
 
 static struct aws_h2err s_decoder_on_window_update(uint32_t stream_id, uint32_t window_size_increment, void *userdata) {

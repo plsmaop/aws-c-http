@@ -484,9 +484,9 @@ static void s_aws_http_connection_manager_build_transaction(struct aws_connectio
          */
         while (aws_array_list_length(&manager->connections) > 0 && manager->pending_acquisition_count > 0) {
             struct aws_http_connection *connection = NULL;
-            aws_array_list_back(&manager->connections, &connection);
+            aws_array_list_front(&manager->connections, &connection);
 
-            aws_array_list_pop_back(&manager->connections);
+            aws_array_list_pop_front(&manager->connections);
 
             AWS_LOGF_DEBUG(
                 AWS_LS_HTTP_CONNECTION_MANAGER,
